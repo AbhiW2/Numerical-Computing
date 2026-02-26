@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include "Bisection.hpp"
 #include "NewtonRaphson.hpp"
