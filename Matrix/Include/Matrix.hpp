@@ -1,38 +1,58 @@
+// #ifndef MATRIX_HPP
+// #define MATRIX_HPP
+
+// #include <iostream>
+// using namespace std;
+
+// class Matrix {
+// protected:
+//     int rows, cols;
+//     double **data;
+
+// public:
+//     Matrix(int r, int c);
+//     Matrix(const Matrix &other);
+//     virtual ~Matrix();
+
+//     // Basic operations
+//     Matrix add(const Matrix &other);
+//     Matrix subtract(const Matrix &other);
+//     Matrix multiply(const Matrix &other);
+
+//     void setValue(int r, int c, double val);
+//     double getValue(int r, int c) const;
+
+//     void display() const;
+// };
+
+// #endif
+
+
+
+
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
 #include <iostream>
-using namespace std;
 
-
-class MatrixBase {
-public:
-    virtual void input() = 0;
-    virtual void display() const = 0;
-    virtual void gaussianElimination() = 0;
-};
-
-/*
-   Derived Class (Inheritance)
-   Encapsulation: data members are private
-  */
-class Matrix : public MatrixBase {
-private:
+class Matrix {
+protected:
     int rows, cols;
-    double data[10][10];   // fixed size for simplicity
+    double **data;
 
 public:
-    // Constructor
-    Matrix(int r = 0, int c = 0);
+    Matrix(int r, int c);
+    Matrix(const Matrix &other);
+    virtual ~Matrix();
 
-    // Operator Overloading
-    Matrix operator+(const Matrix& other);
-    Matrix operator-(const Matrix& other);
+    Matrix add(const Matrix &other);
+    Matrix subtract(const Matrix &other);
+    Matrix multiply(const Matrix &other);
 
-    // Overriding Base Class Functions (Polymorphism)
-    void input() override;
-    void display() const override;
-    void gaussianElimination() override;
+    void setValue(int r, int c, double val);
+    double getValue(int r, int c) const;
+
+    void display() const;
 };
 
 #endif
