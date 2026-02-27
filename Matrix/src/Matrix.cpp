@@ -1,82 +1,100 @@
-#include "Matrix.hpp"
 
-/* Constructor */
+#include "../Include/Matrix.hpp"
+#include <iostream>
+
+// Constructor
 Matrix::Matrix(int r, int c) {
     rows = r;
     cols = c;
 
-    // Initialize matrix with 0
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            data[i][j] = 0;
-}
-
-/* Input Function */
-void Matrix::input() {
-    cout << "Enter matrix elements:\n";
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            cin >> data[i][j];
-}
-
-/* Display Function */
-void Matrix::display() const {
-    cout << "\nMatrix:\n";
+    data = new double*[rows];
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++)
-            cout << data[i][j] << " ";
-        cout << endl;
+        data[i] = new double[cols];
+        for (int j = 0; j < cols; j++) {
+            data[i][j] = 0.0;
+        }
     }
 }
 
-/* Operator Overloading for Addition */
-Matrix Matrix::operator+(const Matrix& other) {
+// Copy Constructor
+Matrix::Matrix(const Matrix &other) {
+    rows = other.rows;
+    cols = other.cols;
+
+    data = new double*[rows];
+    for (int i = 0; i < rows; i++) {
+        data[i] = new double[cols];
+        for (int j = 0; j < cols; j++) {
+            data[i][j] = other.data[i][j];
+        }
+    }
+}
+
+// Destructor
+Matrix::~Matrix() {
+    for (int i = 0; i < rows; i++) {
+        delete[] data[i];
+    }
+    delete[] data;
+}
+
+// Addition
+Matrix Matrix::add(const Matrix &other) {
     Matrix result(rows, cols);
 
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
             result.data[i][j] = data[i][j] + other.data[i][j];
-
-    return result;
-}
-
-/* Operator Overloading for Subtraction */
-Matrix Matrix::operator-(const Matrix& other) {
-    Matrix result(rows, cols);
-
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < cols; j++)
-            result.data[i][j] = data[i][j] - other.data[i][j];
-
-    return result;
-}
-
-/*
-   Gaussian Elimination 
-   Converts matrix into upper triangular form
-*/
-void Matrix::gaussianElimination() {
-    if (rows != cols) {
-        cout << "Gaussian Elimination requires square matrix.\n";
-        return;
+        }
     }
 
-    for (int k = 0; k < rows - 1; k++) {
-        for (int i = k + 1; i < rows; i++) {
+    return result;
+}
 
-            if (data[k][k] == 0) {
-                cout << "Zero pivot encountered. Cannot proceed.\n";
-                return;
-            }
+// Subtraction
+Matrix Matrix::subtract(const Matrix &other) {
+    Matrix result(rows, cols);
 
-            double factor = data[i][k] / data[k][k];
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            result.data[i][j] = data[i][j] - other.data[i][j];
+        }
+    }
 
-            for (int j = k; j < cols; j++) {
-                data[i][j] -= factor * data[k][j];
+    return result;
+}
+
+// Multiplication
+Matrix Matrix::multiply(const Matrix &other) {
+    Matrix result(rows, other.cols);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < other.cols; j++) {
+            for (int k = 0; k < cols; k++) {
+                result.data[i][j] += data[i][k] * other.data[k][j];
             }
         }
     }
 
-    cout << "\nUpper Triangular Matrix:\n";
-    display();
+    return result;
+}
+
+// Set value
+void Matrix::setValue(int r, int c, double val) {
+    data[r][c] = val;
+}
+
+// Get value
+double Matrix::getValue(int r, int c) const {
+    return data[r][c];
+}
+
+// Display matrix
+void Matrix::display() const {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            std::cout << data[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
 }
