@@ -1,27 +1,38 @@
-
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
 #include <iostream>
+#include <stdexcept>
 
-class Matrix {
+class Matrix
+{
 protected:
-    int rows, cols;
+    int rows;
+    int cols;
     double **data;
 
 public:
-    Matrix(int r, int c);    //Constructor
-    Matrix(const Matrix &other);  //copy constructor
-    virtual ~Matrix(); 
+    // Constructor
+    Matrix(int r, int c);
 
-    Matrix add(const Matrix &other);
-    Matrix subtract(const Matrix &other);
-    Matrix multiply(const Matrix &other);
+    // Copy Constructor (Deep Copy)
+    Matrix(const Matrix &other);
 
-    void setValue(int r, int c, double val);
+    // Destructor
+    virtual ~Matrix();
+
+    // Operator Overloading
+    Matrix operator+(const Matrix &other) const;
+    Matrix operator-(const Matrix &other) const;
+    Matrix operator*(const Matrix &other) const;
+
+    // Utility Functions
+    void setValue(int r, int c, double value);
     double getValue(int r, int c) const;
-
     void display() const;
+
+    int getRows() const;
+    int getCols() const;
 };
 
 #endif
