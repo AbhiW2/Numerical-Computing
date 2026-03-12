@@ -1,24 +1,22 @@
 #ifndef GAUSSIAN_ELIMINATION_HPP
 #define GAUSSIAN_ELIMINATION_HPP
 
-#include "Matrix.hpp"
+#include "LinearSystemSolver.hpp"
 #include <vector>
 #include <fstream>
+#include <cmath>
 
-class GaussianElimination : public Matrix {
+class GaussianElimination : public LinearSystemSolver {
+private:
+    static constexpr double EPS = 1e-12;
+
 public:
-    // Constructor
-    GaussianElimination(int r, int c);
+    GaussianElimination(int n);
 
-    // Combine A (49l.txt) and b (49r.txt) → augmented matrix
-    void loadAugmentedMatrix(std::ifstream &Afile, std::ifstream &bfile);
-
-    // Gaussian elimination steps
+    void loadAugmentedMatrix(std::ifstream& Afile, std::ifstream& bfile) override;
     void forwardElimination();
     std::vector<double> backSubstitution();
-
-    // Solve system
-    std::vector<double> solve();
+    std::vector<double> solve() override;
 };
 
 #endif
