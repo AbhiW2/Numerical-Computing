@@ -1,3 +1,4 @@
+
 #ifndef GAUSSIAN_ELIMINATION_HPP
 #define GAUSSIAN_ELIMINATION_HPP
 
@@ -5,17 +6,23 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <iomanip>
+
 
 class GaussianElimination : public LinearSystemSolver {
 private:
-    static constexpr double EPS = 1e-12;
+    static constexpr double EPS = 1e-10;  // Tolerance for zero comparison
+
+    void forwardElimination();
+    std::vector<double> backSubstitution();
 
 public:
     GaussianElimination(int n);
 
     void loadAugmentedMatrix(std::ifstream& Afile, std::ifstream& bfile) override;
-    void forwardElimination();
-    std::vector<double> backSubstitution();
+
     std::vector<double> solve() override;
 };
 
