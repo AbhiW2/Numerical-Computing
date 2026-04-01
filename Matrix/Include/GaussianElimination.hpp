@@ -10,19 +10,17 @@
 #include <iostream>
 #include <iomanip>
 
-
 class GaussianElimination : public LinearSystemSolver {
 private:
-    static constexpr double EPS = 1e-10;  // Tolerance for zero comparison
+    static constexpr double EPS = 1e-10;
 
     void forwardElimination();
     std::vector<double> backSubstitution();
 
 public:
-    GaussianElimination(int n);
+    explicit GaussianElimination(int n);
 
     void loadAugmentedMatrix(std::ifstream& Afile, std::ifstream& bfile) override;
-
     std::vector<double> solve() override;
 };
 
