@@ -7,11 +7,11 @@
 
 class GaussSeidel : public LinearSystemSolver {
 private:
-    int maxIter;
+    int    maxIter;
     double tol;
 
 public:
-    GaussSeidel(int n, int maxIter = 100, double tol = 1e-6);
+    GaussSeidel(int n, int maxIter = 1000, double tol = 1e-6);
 
     void loadAugmentedMatrix(std::ifstream& Afile, std::ifstream& bfile) override;
     std::vector<double> solve() override;
