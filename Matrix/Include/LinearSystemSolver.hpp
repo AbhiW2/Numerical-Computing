@@ -8,13 +8,18 @@
 
 class LinearSystemSolver : public Matrix {
 public:
-    LinearSystemSolver(int n);        // n equations → augmented matrix n×(n+1)
-    LinearSystemSolver(int r, int c); // general constructor
+    LinearSystemSolver(int n);
+    LinearSystemSolver(int r, int c);
     virtual ~LinearSystemSolver() = default;
 
-    // Pure virtual functions - must be implemented by derived classes
     virtual void loadAugmentedMatrix(std::ifstream& Afile, std::ifstream& bfile) = 0;
     virtual std::vector<double> solve() = 0;
+
+protected:
+    // Reads "n n+1" header then fills the n×(n+1) augmented matrix [A|b]
+    void loadFromAugmentedFile(std::ifstream& Afile);
+    bool checkDiagDominant();
+    void makeDiagDominant();
 };
 
-#endif // LINEAR_SYSTEM_SOLVER_HPP
+#endif
