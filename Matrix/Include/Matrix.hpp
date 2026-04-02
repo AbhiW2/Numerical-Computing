@@ -44,7 +44,7 @@ public:
     bool isTranspose(const Matrix& m) const;
 
     void   makeDiagonal();
-    void   makeDiagonallyDominant();
+    void   makeDiagonallyDominant();  // greedy row-swap reordering
     Matrix transpose() const;
 
     double determinant() const;
