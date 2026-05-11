@@ -7,6 +7,7 @@
 #include "Include/Matrix.hpp"
 #include "Include/Gershgorin.hpp"
 #include "Include/LagrangeInterpolation.hpp"
+#include "Include/LeastSquares.hpp"
 
 using namespace std;
 
@@ -166,14 +167,15 @@ int main() {
 
         cout << "\nChoose Interpolation Method:\n";
         cout << "1. Lagrange Interpolation\n";
+        cout << "2. Least Squares Approximation\n";
         cout << "Enter choice: ";
 
         int interpChoice;
         cin >> interpChoice;
 
+        // ── 1. Lagrange ───────────────────────────────────────────────────
         if (interpChoice == 1) {
 
-            // ── Option A: load from file ──────────────────────────
             cout << "\nLoad data points from:\n";
             cout << "1. File\n";
             cout << "2. Keyboard\n";
@@ -187,7 +189,6 @@ int main() {
 
             try {
                 if (srcChoice == 1) {
-                    // Read n from file header so we can size the solver
                     string fname;
                     cout << "Enter filename (e.g. points.txt): ";
                     cin >> fname;
@@ -205,14 +206,11 @@ int main() {
                     solver->loadDataPoints(fin);
                 }
                 else {
-                    // ── Option B: enter from keyboard ─────────────
                     cout << "Enter number of data points: ";
                     cin >> n;
 
                     solver = new LagrangeInterpolation(n);
 
-                    // Manually fill the underlying Matrix data
-                    // (same way main.cpp does for Matrix Operations)
                     cout << "Enter data points as  x  y  pairs:\n";
                     for (int i = 0; i < n; ++i) {
                         double xi, yi;
@@ -223,14 +221,11 @@ int main() {
                         (*solver)(i, 0) = xi;
                         (*solver)(i, 1) = yi;
                     }
-                    // Validate distinct x nodes manually
                     cout << "\nData points accepted.\n\n";
                 }
 
-                // Show loaded points
                 solver->displayDataPoints();
 
-                // Sub-menu
                 bool running = true;
                 while (running) {
                     cout << "Lagrange Operations:\n";
@@ -287,6 +282,101 @@ int main() {
                 delete solver;
             }
         }
+
+        // ── 2. Least Squares ──────────────────────────────────────────────
+        else if (interpChoice == 2) {
+
+            cout << "\nLoad data points from:\n";
+            cout << "1. File\n";
+            cout << "2. Keyboard\n";
+            cout << "Enter choice: ";
+
+            int srcChoice;
+            cin >> srcChoice;
+
+            int n, degree;
+            LeastSquares* solver = nullptr;
+
+            try {
+                cout << "Enter polynomial degree (must be < number of points): ";
+                cin >> degree;
+
+                if (srcChoice == 1) {
+                    string fname;
+                    cout << "Enter filename (e.g. points.txt): ";
+                    cin >> fname;
+
+                    ifstream peek(fname);
+                    if (!peek) { cout << "Error: cannot open " << fname << "\n"; return 1; }
+                    peek >> n;
+                    peek.close();
+
+                    solver = new LeastSquares(n, degree);
+                    ifstream fin(fname);
+                    solver->loadDataPoints(fin);   // also calls fit()
+                }
+                else {
+                    cout << "Enter number of data points: ";
+                    cin >> n;
+
+                    solver = new LeastSquares(n, degree);
+
+                    cout << "Enter data points as  x  y  pairs:\n";
+                    for (int i = 0; i < n; ++i) {
+                        double xi, yi;
+                        cout << "  Point " << i << ":  x = "; cin >> xi;
+                        cout << "           y = "; cin >> yi;
+                        (*solver)(i, 0) = xi;
+                        (*solver)(i, 1) = yi;
+                    }
+                    cout << "\nData points accepted.\n\n";
+                    solver->fit();   // must call manually when data entered by keyboard
+                }
+
+                solver->displayDataPoints();
+
+                bool running = true;
+                while (running) {
+                    cout << "Least Squares Operations:\n";
+                    cout << "1. Evaluate P(x) at a point\n";
+                    cout << "2. Print fitted polynomial formula\n";
+                    cout << "3. Show normal equations\n";
+                    cout << "4. Show residuals\n";
+                    cout << "5. Show SSE (Sum of Squared Errors)\n";
+                    cout << "6. Back to main menu\n";
+                    cout << "Enter choice: ";
+
+                    int op;
+                    cin >> op;
+
+                    if (op == 1) {
+                        double xq;
+                        cout << "Enter x to evaluate: ";
+                        cin >> xq;
+                        cout << "\nP(" << xq << ") = " << solver->interpolate(xq) << "\n\n";
+                    }
+                    else if (op == 2) { solver->printFormula(); }
+                    else if (op == 3) { solver->printNormalEquations(); }
+                    else if (op == 4) {
+                        vector<double> res = solver->residuals();
+                        cout << "\nResiduals  r_i = y_i - P(x_i):\n";
+                        for (int i = 0; i < (int)res.size(); ++i)
+                            cout << "  r[" << i << "] = " << res[i] << "\n";
+                        cout << "\n";
+                    }
+                    else if (op == 5) { cout << "\nSSE = " << solver->SSE() << "\n\n"; }
+                    else if (op == 6) { running = false; }
+                    else { cout << "Invalid choice\n"; }
+                }
+
+                delete solver;
+            }
+            catch (exception& e) {
+                cout << "Error: " << e.what() << "\n";
+                delete solver;
+            }
+        }
+
         else {
             cout << "Invalid interpolation choice\n";
         }
